@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import pairwise_distances
-from embedding_utilities import euclidean_dist, cosine_dist
+from src.embedding_utilities import euclidean_dist, cosine_dist
 
 #glove_path = '../large-files/glove6B/glove.6B.50d.txt'
 
