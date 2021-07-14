@@ -1,8 +1,8 @@
 import logging
 from flask import Flask, request, render_template
 
-from embedding_utilities import euclidean_dist, cosine_dist
-from embedding import Embedding
+from src.embedding_utilities import euclidean_dist, cosine_dist
+from src.embedding import Embedding
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
