@@ -38,9 +38,9 @@ class Embedding():
                 index_to_word.append(word)
 
                 num +=1
-                if num % 200000 == 0:
+                if num % 160000 == 0:
                     print(f'line number {num}')
-                    print(line)
+                    print(line[:16])
 
         embedding = pd.DataFrame(embedding, index=word2vec.keys())
         num_words, num_dims = embedding.shape
@@ -58,6 +58,9 @@ class Embedding():
         king = self.word2vec[w1]
         man = self.word2vec[w2]
         woman = self.word2vec[w3]
+        # king - queen = man - woman
+        # king - queen - man = - woman
+        # - king + queen + man = woman
         v0 = king - man + woman
 
         distances = pairwise_distances(v0.reshape(1, self.D), self.embedding, self.metric).reshape(self.V)
