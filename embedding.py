@@ -56,12 +56,14 @@ class Embedding():
                 return
 
         king = self.word2vec[w1]
-        man = self.word2vec[w2]
-        woman = self.word2vec[w3]
+        queen = self.word2vec[w2]
+        man = self.word2vec[w3]
+        # man = self.word2vec[w2]
+        # woman = self.word2vec[w3]
         # king - queen = man - woman
         # king - queen - man = - woman
         # - king + queen + man = woman
-        v0 = king - man + woman
+        v0 = - king + queen + man
 
         distances = pairwise_distances(v0.reshape(1, self.D), self.embedding, self.metric).reshape(self.V)
         idxs = distances.argsort()[:4]
@@ -72,7 +74,7 @@ class Embedding():
                 best_word = word
                 break
 
-        print(w1, "-", w2, "=", best_word, "-", w3)
+        print(w1, "-", w2, "=", w3, "-", best_word)
         return best_word
 
 
