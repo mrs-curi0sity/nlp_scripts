@@ -40,9 +40,10 @@ def load_embeddings(is_local = LOCAL_INSTANCE):
        
 load_embeddings(is_local = LOCAL_INSTANCE)
 
-app = Flask(__name__)
+application = Flask(__name__)
+app = application
 
-@app.route("/")
+@application.route("/")
 def index():
     return render_template("input-king-queen.html")
 
