@@ -6,9 +6,12 @@ from src.embedding import Embedding
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
+BUCKET_NAME = 'ma-2021-07-word-embeddings'
+FILE_NAME_EN = 'glove.6B.300d.txt'
+FILE_NAME_DE = 'GloVe_vectors_de.txt'
 
-glove_path_en = '../large-files/glove6B/glove.6B.50d.txt'
-glove_path_de = '../large-files/GloVe_vectors_de.txt'
+glove_path_en = f's3://{BUCKET_NAME}/{FILE_NAME_EN}' #'../data/glove.6B.100d.txt'
+glove_path_de = f's3://{BUCKET_NAME}/{FILE_NAME_DE}'#'../data/GloVe_vectors_de.txt'
 
 glove_embedding_en = Embedding(language='en', path=glove_path_en)
 glove_embedding_de = Embedding(language='de', path=glove_path_de)

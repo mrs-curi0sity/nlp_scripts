@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import pairwise_distances
 from src.embedding_utilities import euclidean_dist, cosine_dist
+import smart_open
+from tqdm import tqdm
 
 #glove_path = '../large-files/glove6B/glove.6B.50d.txt'
 
@@ -12,42 +14,49 @@ class Embedding():
         self.path = path
         self.dist = dist
         self.metric = metric
-        self.word2vec, self.embedding, self.index_to_word = self.load_word2vec()
+        self.word2vec, self.embedding, self.index_to_word = {}, [], []
+        self.load_word2vec()
         self.V, self.D = self.embedding.shape
         
-    
+        
+    def read_embedding_from_line(self, line):
+        values = line.split()
+        word = values[0]
+        vec = np.asarray(values[1:], dtype='float32')
+        self.word2vec[word] = vec
+
+        self.embedding.append(vec)
+        self.index_to_word.append(word)
+        
+
     # TODO use lfs for large files
     def load_word2vec(self):
-        print(f'loading word embeddings word to vec from path {self.path}')
+        num_lines = 0
+        print(f'loading word embeddings word to vec from path {self.path}, num lines: {num_lines}')
+        
+        if self.path.startswith('s3:'): # aws bucket
+            for i, line in enumerate(tqdm(smart_open.smart_open(self.path))):
+                self.read_embedding_from_line(line)
 
-        word2vec = {}
-        embedding = []
-        index_to_word = []
+        else:
+            with open(self.path) as file:
+                for i, line in enumerate(tqdm(file)):
+                    self.read_embedding_from_line(line)
 
-        with open(self.path) as file:
-            num = 0
-            for line in file:
-                values = line.split()
-
-                word = values[0]
-                vec = np.asarray(values[1:], dtype='float32')
-
-                word2vec[word] = vec
-
-                embedding.append(vec)
-                index_to_word.append(word)
-
-                num +=1
-                if num % 160000 == 0:
-                    print(f'line number {num}')
-                    print(line[:16])
-
-        embedding = pd.DataFrame(embedding, index=word2vec.keys())
-        num_words, num_dims = embedding.shape
-
+        self.embedding = pd.DataFrame(self.embedding, index=self.word2vec.keys())
+        
+        num_words, num_dims = self.embedding.shape
         print(f'total number of entries found:  {num_words}. Dimension: {num_dims}')
-        return(word2vec, embedding, index_to_word)
+
+        
     
+    def get_embedding(self, word):
+        try:
+            return self.word2vec[word]
+        except:
+            print(f'sorry, word {word} not in index')
+            return 
+
     def find_analogies(self, w1, w2, w3):
 
         for w in (w1, w2, w3):
