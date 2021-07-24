@@ -38,7 +38,7 @@ def load_embeddings(is_local = LOCAL_INSTANCE):
     return glove_embedding_en, glove_embedding_de
 
        
-load_embeddings(is_local = LOCAL_INSTANCE)
+glove_embedding_en, glove_embedding_de = load_embeddings(is_local = LOCAL_INSTANCE)
 
 application = Flask(__name__)
 app = application
