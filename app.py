@@ -3,6 +3,9 @@ from flask import Flask, request, render_template
 
 from src.embedding_utilities import euclidean_dist, cosine_dist
 from src.embedding import Embedding
+import pathlib
+
+
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
@@ -10,11 +13,32 @@ BUCKET_NAME = 'ma-2021-07-word-embeddings'
 FILE_NAME_EN = 'glove.6B.300d.txt'
 FILE_NAME_DE = 'GloVe_vectors_de.txt'
 
-glove_path_en = f's3://{BUCKET_NAME}/{FILE_NAME_EN}' #'../data/glove.6B.100d.txt'
-glove_path_de = f's3://{BUCKET_NAME}/{FILE_NAME_DE}'#'../data/GloVe_vectors_de.txt'
+if '/Users/magdalena.aretz' in str(pathlib.Path('.').parent.resolve()):
+    LOCAL_INSTANCE = True
+else:
+    LOCAL_INSTANCE = False
 
-glove_embedding_en = Embedding(language='en', path=glove_path_en)
-glove_embedding_de = Embedding(language='de', path=glove_path_de)
+
+def load_embeddings(is_local = LOCAL_INSTANCE):
+    logging.info(f'start loading embeddings. is_local: {LOCAL_INSTANCE}')
+    """
+    load pretrained word embeddings.
+    if this is a local flask server, use local file version
+    otherwise: usw (slower) aws s3 bucket file
+    """
+    if LOCAL_INSTANCE:
+        glove_path_en = 'data/glove.6B.100d.txt'
+        glove_path_de = 'data/GloVe_vectors_de.txt'
+    else:
+        glove_path_en = f's3://{BUCKET_NAME}/{FILE_NAME_EN}' 
+        glove_path_de = f's3://{BUCKET_NAME}/{FILE_NAME_DE}'
+    glove_embedding_en = Embedding(language='en', path=glove_path_en)
+    glove_embedding_de = Embedding(language='de', path=glove_path_de)
+    
+    return glove_embedding_en, glove_embedding_de
+
+       
+load_embeddings(is_local = LOCAL_INSTANCE)
 
 app = Flask(__name__)
 
