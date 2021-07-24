@@ -19,5 +19,8 @@ from pexels.com
 # dependencies installieren
 > pip install -r requirements.txt
 
-# app starten, so dass jede änderung automatisch reloaded wird
+# app lokal starten, so dass jede änderung automatisch reloaded wird
 > FLASK_ENV=development flask run
+
+# app nach aws pushen
+> git push (gibt cicd connection über codepipeline)
