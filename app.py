@@ -6,7 +6,6 @@ from src.embedding import Embedding
 import pathlib
 
 
-
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
 BUCKET_NAME = 'ma-2021-07-word-embeddings'
@@ -27,13 +26,13 @@ def load_embeddings(is_local = LOCAL_INSTANCE):
     otherwise: usw (slower) aws s3 bucket file
     """
     if LOCAL_INSTANCE:
-        glove_path_en = 'data/glove.6B.100d.txt'
-        glove_path_de = 'data/GloVe_vectors_de.txt'
+        glove_path_en = ['data/glove.6B.100d.txt']
+        glove_path_de = ['data/GloVe_vectors_de_part_01.txt', 'data/GloVe_vectors_de_part_02.txt']
     else:
-        glove_path_en = f's3://{BUCKET_NAME}/{FILE_NAME_EN}' 
-        glove_path_de = f's3://{BUCKET_NAME}/{FILE_NAME_DE}'
-    glove_embedding_en = Embedding(language='en', path=glove_path_en)
-    glove_embedding_de = Embedding(language='de', path=glove_path_de)
+        glove_path_en = [f's3://{BUCKET_NAME}/{FILE_NAME_EN}']
+        glove_path_de = [f's3://{BUCKET_NAME}/{FILE_NAME_DE}']
+    glove_embedding_en = Embedding(language='en', path_list=glove_path_en)
+    glove_embedding_de = Embedding(language='de', path_list=glove_path_de)
     
     return glove_embedding_en, glove_embedding_de
 

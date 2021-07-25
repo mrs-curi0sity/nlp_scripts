@@ -4,14 +4,14 @@ from sklearn.metrics.pairwise import pairwise_distances
 from src.embedding_utilities import euclidean_dist, cosine_dist
 import smart_open
 from tqdm import tqdm
+import logging
 
-#glove_path = '../large-files/glove6B/glove.6B.50d.txt'
 
 class Embedding():
     
-    def __init__(self, language, path, dist=cosine_dist, metric='cosine'):
+    def __init__(self, language, path_list, dist=cosine_dist, metric='cosine'):
         self.language=language
-        self.path = path
+        self.path_list = path_list 
         self.dist = dist
         self.metric = metric
         self.word2vec, self.embedding, self.index_to_word = {}, [], []
@@ -29,19 +29,21 @@ class Embedding():
         self.index_to_word.append(word)
         
 
-    # TODO use lfs for large files
     def load_word2vec(self):
-        num_lines = 0
-        print(f'loading word embeddings word to vec from path {self.path}, num lines: {num_lines}')
+        logging.info(f'loading word embeddings word to vec from path {self.path_list}')
         
-        if self.path.startswith('s3:'): # aws bucket
-            for i, line in enumerate(tqdm(smart_open.smart_open(self.path))):
-                self.read_embedding_from_line(line)
+        if self.path_list[0].startswith('s3:'): # aws bucket
+            for idx, path in enumerate(self.path_list):
+                logging.info(f"-- reading in part {idx} of {len(self.path_list)}")
+                for i, line in enumerate(tqdm(smart_open.smart_open(path))):
+                    self.read_embedding_from_line(line)
 
         else:
-            with open(self.path) as file:
-                for i, line in enumerate(tqdm(file)):
-                    self.read_embedding_from_line(line)
+            for idx, path in enumerate(self.path_list):
+                logging.info(f"-- reading in part {idx} of {len(self.path_list)}")
+                with open(path) as file:
+                    for i, line in enumerate(tqdm(file)):
+                        self.read_embedding_from_line(line)
 
         self.embedding = pd.DataFrame(self.embedding, index=self.word2vec.keys())
         
@@ -67,10 +69,7 @@ class Embedding():
         king = self.word2vec[w1]
         queen = self.word2vec[w2]
         man = self.word2vec[w3]
-        # man = self.word2vec[w2]
-        # woman = self.word2vec[w3]
         # king - queen = man - woman
-        # king - queen - man = - woman
         # - king + queen + man = woman
         v0 = - king + queen + man
 
