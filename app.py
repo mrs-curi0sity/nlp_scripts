@@ -12,11 +12,13 @@ BUCKET_NAME = 'ma-2021-07-word-embeddings'
 FILE_NAME_EN = 'glove.6B.100d.txt'
 FILE_NAME_DE = 'GloVe_vectors_de_50000.txt' #'GloVe_vectors_de.txt' big file: 1.3 Mio words, 2GB
 
+"""
 if '/Users/magdalena.aretz' in str(pathlib.Path('.').parent.resolve()):
     LOCAL_INSTANCE = True
 else:
     LOCAL_INSTANCE = False
-
+"""
+LOCAL_INSTANCE = TRUE # dont use aws s3 bucket. it is too slow
 
 def load_embeddings(is_local = LOCAL_INSTANCE):
     logging.info(f'start loading embeddings. is_local: {LOCAL_INSTANCE}')
