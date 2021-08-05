@@ -22,12 +22,12 @@ class Embedding():
     def read_embedding_from_line(self, line):
         values = line.split()
         word = values[0]
+
         vec = np.asarray(values[1:], dtype='float32')
         self.word2vec[word] = vec
-
         self.embedding.append(vec)
         self.index_to_word.append(word)
-        
+
 
     def load_word2vec(self):
         logging.info(f'loading word embeddings word to vec from path {self.path_list}')
