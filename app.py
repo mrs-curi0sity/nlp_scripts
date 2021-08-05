@@ -4,13 +4,13 @@ from flask import Flask, request, render_template
 from src.embedding_utilities import euclidean_dist, cosine_dist
 from src.embedding import Embedding
 import pathlib
-
+import os
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
 BUCKET_NAME = 'ma-2021-07-word-embeddings'
-FILE_NAME_EN = 'glove.6B.300d.txt'
-FILE_NAME_DE = 'GloVe_vectors_de.txt'
+FILE_NAME_EN = 'glove.6B.100d.txt'
+FILE_NAME_DE = 'GloVe_vectors_de_50000.txt' #'GloVe_vectors_de.txt' big file: 1.3 Mio words, 2GB
 
 if '/Users/magdalena.aretz' in str(pathlib.Path('.').parent.resolve()):
     LOCAL_INSTANCE = True
@@ -26,8 +26,8 @@ def load_embeddings(is_local = LOCAL_INSTANCE):
     otherwise: usw (slower) aws s3 bucket file
     """
     if LOCAL_INSTANCE:
-        glove_path_en = ['data/glove.6B.100d.txt']
-        glove_path_de = ['data/GloVe_vectors_de_part_01.txt', 'data/GloVe_vectors_de_part_02.txt']
+        glove_path_en = [os.path.join('data', FILE_NAME_EN)]
+        glove_path_de = [os.path.join('data', FILE_NAME_DE)]
     else:
         glove_path_en = [f's3://{BUCKET_NAME}/{FILE_NAME_EN}']
         glove_path_de = [f's3://{BUCKET_NAME}/{FILE_NAME_DE}']
@@ -35,10 +35,11 @@ def load_embeddings(is_local = LOCAL_INSTANCE):
     glove_embedding_de = Embedding(language='de', path_list=glove_path_de)
     
     return glove_embedding_en, glove_embedding_de
-
        
 glove_embedding_en, glove_embedding_de = load_embeddings(is_local = LOCAL_INSTANCE)
 
+
+# in heroku: should be called app, in aws should be called application
 application = Flask(__name__)
 app = application
 
