@@ -5,7 +5,7 @@ from src.embedding_utilities import euclidean_dist, cosine_dist
 import smart_open
 from tqdm import tqdm
 import logging
-
+import csv
 
 class Embedding():
     
@@ -37,15 +37,26 @@ class Embedding():
                 logging.info(f"-- reading in part {idx} of {len(self.path_list)}")
                 for i, line in enumerate(tqdm(smart_open.smart_open(path))):
                     self.read_embedding_from_line(line)
+                    
 
         else:
-            for idx, path in enumerate(self.path_list):
-                logging.info(f"-- reading in part {idx} of {len(self.path_list)}")
-                with open(path) as file:
-                    for i, line in enumerate(tqdm(file)):
-                        self.read_embedding_from_line(line)
+            df_embeddings = pd.concat([pd.read_csv(path, sep=' ', index_col=0, header=None, engine='python', quoting=csv.QUOTE_NONE) for path in self.path_list])
+            df_embeddings = df_embeddings[df_embeddings.index.notnull()] # es gibt im 50k datensatz eine NaN Zeile, die gedroppt werden sollte
+            logging.info(f'read in embeddings of shape {df_embeddings.shape}')
+            self.word2vec = df_embeddings.to_dict(orient='index')
+            logging.info(f'reading embedding')
+            self.embedding = df_embeddings #df_embeddings.values.tolist()
+            logging.info(f'reading index_to_word')
+            self.index_to_word = list(df_embeddings.index)
+            
+            #for idx, path in enumerate(self.path_list):
+            #    logging.info(f"-- reading in part {idx} of {len(self.path_list)}")
+                
+                #with open(path) as file:
+                #    for i, line in enumerate(tqdm(file)):
+                #        self.read_embedding_from_line(line)
 
-        self.embedding = pd.DataFrame(self.embedding, index=self.word2vec.keys())
+        #self.embedding = pd.DataFrame(self.embedding, index=self.word2vec.keys())
         
         num_words, num_dims = self.embedding.shape
         print(f'total number of entries found:  {num_words}. Dimension: {num_dims}')
@@ -66,14 +77,14 @@ class Embedding():
                 print("%s not in dictionary" % w)
                 return
 
-        king = self.word2vec[w1]
-        queen = self.word2vec[w2]
-        man = self.word2vec[w3]
+        king = self.embedding.loc[w1]
+        queen = self.embedding.loc[w2]
+        man = self.embedding.loc[w3]
         # king - queen = man - woman
         # - king + queen + man = woman
         v0 = - king + queen + man
 
-        distances = pairwise_distances(v0.reshape(1, self.D), self.embedding, self.metric).reshape(self.V)
+        distances = pairwise_distances(v0.values.reshape(1, self.D), self.embedding, self.metric).reshape(self.V)
         idxs = distances.argsort()[:4]
 
         for idx in idxs:
