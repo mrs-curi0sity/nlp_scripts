@@ -32,6 +32,7 @@ class Embedding():
     def load_word2vec(self):
         logging.info(f'loading word embeddings word to vec from path {self.path_list}')
         
+        """ since using s3fs working with s3 files is just as easy as working locally
         if self.path_list[0].startswith('s3:'): # aws bucket
             for idx, path in enumerate(self.path_list):
                 logging.info(f"-- reading in part {idx} of {len(self.path_list)}")
@@ -40,14 +41,15 @@ class Embedding():
                     
 
         else:
-            df_embeddings = pd.concat([pd.read_csv(path, sep=' ', index_col=0, header=None, engine='python', quoting=csv.QUOTE_NONE) for path in self.path_list])
-            df_embeddings = df_embeddings[df_embeddings.index.notnull()] # es gibt im 50k datensatz eine NaN Zeile, die gedroppt werden sollte
-            logging.info(f'read in embeddings of shape {df_embeddings.shape}')
-            self.word2vec = df_embeddings.to_dict(orient='index')
-            logging.info(f'reading embedding')
-            self.embedding = df_embeddings #df_embeddings.values.tolist()
-            logging.info(f'reading index_to_word')
-            self.index_to_word = list(df_embeddings.index)
+        """
+        df_embeddings = pd.concat([pd.read_csv(path, sep=' ', index_col=0, header=None, engine='python', quoting=csv.QUOTE_NONE) for path in self.path_list])
+        df_embeddings = df_embeddings[df_embeddings.index.notnull()] # es gibt im 50k datensatz eine NaN Zeile, die gedroppt werden sollte
+        logging.info(f'read in embeddings of shape {df_embeddings.shape}')
+        self.word2vec = df_embeddings.to_dict(orient='index')
+        logging.info(f'reading embedding')
+        self.embedding = df_embeddings #df_embeddings.values.tolist()
+        logging.info(f'reading index_to_word')
+        self.index_to_word = list(df_embeddings.index)
             
             #for idx, path in enumerate(self.path_list):
             #    logging.info(f"-- reading in part {idx} of {len(self.path_list)}")
