@@ -6,6 +6,7 @@ import smart_open
 from tqdm import tqdm
 import logging
 import csv
+import sys
 
 class Embedding():
     
@@ -95,7 +96,9 @@ class Embedding():
                 best_word = word
                 break
 
-        print(w1, "-", w2, "=", w3, "-", best_word)
+        logging.info(w1, "-", w2, "=", w3, "-", best_word)
+        logging.info(f'Distances {sys.getsizeof(distances)}')# word2vec {sys.getsizeof(self.word2vec)} embedding {sys.getsizeof(self.embedding)}  index_to_word {sys.getsizeof{self.index_to_word}}')
+
         return best_word
 
 
