@@ -1,3 +1,4 @@
+
 import logging
 from flask import Flask, request, render_template
 
@@ -6,7 +7,7 @@ from src.embedding import Embedding
 import pathlib
 import os
 
-logging.basicConfig(encoding='utf-8', level=logging.INFO) # DEBUG gives thousands of DEBUG lines when reading aws s3 files
+# logging.basicConfig(encoding='utf-8', level=logging.INFO) # DEBUG gives thousands of DEBUG lines when reading aws s3 files
 
 BUCKET_NAME = 'ma-2021-07-word-embeddings'
 FILE_NAME_EN = 'glove.6B.100d_10_test_file.txt' #'glove.6B.100d.txt' #
@@ -19,7 +20,7 @@ else:
     LOCAL_INSTANCE = False
 """
 
-LOCAL_INSTANCE = False #  use aws s3 bucket. it might be slow
+LOCAL_INSTANCE = True # dont  use aws s3 bucket. its way to slow. keep a local copy of your embedding files in /data instead
 
 def load_embeddings(is_local = LOCAL_INSTANCE):
     logging.info(f'start loading embeddings. is_local: {LOCAL_INSTANCE}')
@@ -70,4 +71,6 @@ def when_posted():
     logging.info(f'----- computed this analogy: {analogy}')
     return render_template("input-king-queen.html", begriff_1=begriff_1, begriff_2=begriff_2, begriff_3=begriff_3, begriff_4=analogy)
 
-app.run(host='localhost', port=5000)
+if __name__ == "__main__":
+    from waitress import serve
+    serve(app, host='0.0.0.0', port=5000)
