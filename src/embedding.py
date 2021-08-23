@@ -24,7 +24,7 @@ class Embedding():
         values = line.split()
         word = values[0]
 
-        vec = np.asarray(values[1:], dtype='float32')
+        vec = np.asarray(values[1:], dtype='float16')
         self.word2vec[word] = vec
         self.embedding.append(vec)
         self.index_to_word.append(word)
@@ -43,23 +43,22 @@ class Embedding():
 
         else:
         """
-        df_embeddings = pd.concat([pd.read_csv(path, sep=' ', index_col=0, header=None, engine='python', quoting=csv.QUOTE_NONE) for path in self.path_list])
-        df_embeddings = df_embeddings[df_embeddings.index.notnull()] # es gibt im 50k datensatz eine NaN Zeile, die gedroppt werden sollte
-        logging.info(f'read in embeddings of shape {df_embeddings.shape}')
-        self.word2vec = df_embeddings.to_dict(orient='index')
-        logging.info(f'reading embedding')
-        self.embedding = df_embeddings #df_embeddings.values.tolist()
-        logging.info(f'reading index_to_word')
+        df_embeddings = pd.concat([pd.read_csv(path, sep=' ',
+                                               index_col=0,
+                                               header=None,
+                                               engine='python',
+                                               quoting=csv.QUOTE_NONE,
+                                               dtype='float16', # this saved a lot of memory
+                                               converters = {0: str} # just the first column is string
+                                              ) 
+                                   for path in self.path_list])
+        self.embedding = df_embeddings[df_embeddings.index.notnull()] # es gibt im 50k datensatz eine NaN Zeile, die gedroppt werden sollte
+        logging.info(f'read in embeddings of shape {self.embedding.shape}')
+        self.word2vec = self.embedding.to_dict(orient='index')
+        logging.info(f'read in  word2vec')
+        #self.embedding = df_embeddings #df_embeddings.values.tolist()
         self.index_to_word = list(df_embeddings.index)
-            
-            #for idx, path in enumerate(self.path_list):
-            #    logging.info(f"-- reading in part {idx} of {len(self.path_list)}")
-                
-                #with open(path) as file:
-                #    for i, line in enumerate(tqdm(file)):
-                #        self.read_embedding_from_line(line)
-
-        #self.embedding = pd.DataFrame(self.embedding, index=self.word2vec.keys())
+        logging.info(f'read in index_to_word')        
         
         num_words, num_dims = self.embedding.shape
         print(f'total number of entries found:  {num_words}. Dimension: {num_dims}')
@@ -79,7 +78,7 @@ class Embedding():
             if w not in self.word2vec:
                 print("%s not in dictionary" % w)
                 return
-
+        
         king = self.embedding.loc[w1]
         queen = self.embedding.loc[w2]
         man = self.embedding.loc[w3]
@@ -96,8 +95,8 @@ class Embedding():
                 best_word = word
                 break
 
-        logging.info(w1, "-", w2, "=", w3, "-", best_word)
-        logging.info(f'Distances {sys.getsizeof(distances)}')# word2vec {sys.getsizeof(self.word2vec)} embedding {sys.getsizeof(self.embedding)}  index_to_word {sys.getsizeof{self.index_to_word}}')
+        logging.info(f'{w1} - {w2} =  {w3} - {best_word}')
+        #logging.info(f'Distances {sys.getsizeof(distances)}')# word2vec {sys.getsizeof(self.word2vec)} embedding {sys.getsizeof(self.embedding)}  index_to_word {sys.getsizeof{self.index_to_word}}')
 
         return best_word
 
