@@ -39,13 +39,13 @@ http://localhost:5000/
 https://www.twilio.com/blog/deploy-flask-python-app-aws
 1. per ssh zu EC2 instanz verbinden mit
 > ssh ubuntu@<YOUR_IP_ADDRESS>    also 
-> ssh ubuntu@3.69.27.90 (IP aus AWS console => ec2 instanzen abgeguckt)
+> ssh ubuntu@3.67.204.47 (IP aus AWS console => ec2 instanzen abgeguckt)
 
 2. dateien syncen entweder via git
 > git clone / pull / push
 oder via rsync
 > sudo rsync -rv <FULL_PATH>/ ubuntu@<YOUR_IP_ADDRESS>:/home/ubuntu/deployedapp
-> sudo rsync -rv /Users/magdalena.aretz/code/nlp_scripts/data/GloVe_vectors_de_10_test_file.txt ubuntu@3.69.27.90:/home/ubuntu/nlp_scripts/data/GloVe_vectors_de_10_test_file.txt
+> sudo rsync -rv /Users/magdalena.aretz/code/nlp_scripts/data/glove.6B.50d.txt ubuntu@3.67.204.47:/home/ubuntu/nlp_scripts/data/glove.6B.50d.txt
 
 3. tmux session aufmachen
 > tmux new -s test-deployment
