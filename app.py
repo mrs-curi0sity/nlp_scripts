@@ -11,7 +11,7 @@ import os
 logging.basicConfig(level=logging.INFO) # encoding='utf-8',  DEBUG gives thousands of DEBUG lines when reading aws s3 files
 
 BUCKET_NAME = 'ma-2021-07-word-embeddings'
-FILE_NAME_EN = 'glove.6B.50d.txt' #'glove.6B.100d.txt 'glove.6B.100d_10_test_file.txt' #
+FILE_NAME_EN = 'glove.6B.50d.50000.txt' #'glove.6B.50d.txt' #'glove.6B.100d.txt 'glove.6B.100d_10_test_file.txt' #
 FILE_NAME_DE = 'GloVe_vectors_de_50000.txt' #'GloVe_vectors_de_10_test_file.txt' # #'GloVe_vectors_de.txt' big file: 1.3 Mio words, 2GB
 
 """
