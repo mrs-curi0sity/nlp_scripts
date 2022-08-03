@@ -45,7 +45,7 @@ https://www.twilio.com/blog/deploy-flask-python-app-aws
 > git clone / pull / push
 oder via rsync
 > sudo rsync -rv <FULL_PATH>/ ubuntu@<YOUR_IP_ADDRESS>:/home/ubuntu/deployedapp
-> sudo rsync -rv /Users/magdalena.aretz/code/nlp_scripts/data/glove.6B.50d.txt ubuntu@3.67.204.47:/home/ubuntu/nlp_scripts/data/glove.6B.50d.txt
+> sudo rsync -rv /Users/magdalena.aretz/code/nlp_scripts/data/GloVe_vectors_de_16000.txt ubuntu@3.67.204.47:/home/ubuntu/nlp_scripts/data/GloVe_vectors_de_16000.txt
 
 3. tmux session aufmachen
 > tmux new -s test-deployment
